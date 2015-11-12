@@ -22,7 +22,7 @@ _docker-machine() {
 			COMPREPLY=( $(compgen -W "${args}" -- "${cur}") )
 			return 0
 			;;
-    regenerate-certs|inspect|ip|url|env|config|start|restart|status|stop|rm|ssh|scp)
+    regenerate-certs|inspect|upgrade|ip|url|env|config|start|restart|status|stop|rm|ssh|scp)
       args=$(docker-machine ls|awk '{if (NR!=1) {print $1}}')
       COMPREPLY=( $(compgen -W "${args}" -- "${cur}") )
       return 0
