@@ -1,0 +1,72 @@
+# vim: ft=sh 
+#                       
+#        __           __                                     __    _          
+#   ____/ /___  _____/ /_____  _____   ____ ___  ____ ______/ /_  (_)___  ___ 
+#  / __  / __ \/ ___/ //_/ _ \/ ___/  / __ `__ \/ __ `/ ___/ __ \/ / __ \/ _ \
+# / /_/ / /_/ / /__/ ,< /  __/ /     / / / / / / /_/ / /__/ / / / / / / /  __/
+# \__,_/\____/\___/_/|_|\___/_/     /_/ /_/ /_/\__,_/\___/_/ /_/_/_/ /_/\___/ 
+#                           
+#
+_docker-machine() {
+  local cur prev opts base
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+	commands="active config create env inspect ip kill ls regenerate-certs restart rm ssh scp start status stop upgrade url help"
+	help_lookup=$commands
+
+	case "${prev}" in
+		help )
+			args=$(for word in $help_lookup;do echo "$word";done)
+			COMPREPLY=( $(compgen -W "${args}" -- "${cur}") )
+			return 0
+			;;
+    start|restart|status|stop|rm|ssh|scp)
+      args=$(docker-machine ls|awk '{if (NR!=1) {print $1}}')
+      COMPREPLY=( $(compgen -W "${args}" -- "${cur}") )
+      return 0
+      ;;
+	esac
+  
+  # doctl list-units |awk '{print $1}'|sed 1d
+
+  COMPREPLY=($(compgen -W "${commands}" -- "${cur}"))
+  return 0
+}
+
+complete -F _docker-machine docker-machine
+
+# Options:
+#   --debug, -D                                           Enable debug mode
+#   -s, --storage-path "/Users/shawn/.docker/machine"     Configures storage path [$MACHINE_STORAGE_PATH]
+#   --tls-ca-cert                                         CA to verify remotes against [$MACHINE_TLS_CA_CERT]
+#   --tls-ca-key                                          Private key to generate certificates [$MACHINE_TLS_CA_KEY]
+#   --tls-client-cert                                     Client cert to use for TLS [$MACHINE_TLS_CLIENT_CERT]
+#   --tls-client-key                                      Private key used in client TLS auth [$MACHINE_TLS_CLIENT_KEY]
+#   --github-api-token                                    Token to use for requests to the Github API [$MACHINE_GITHUB_API_TOKEN]
+#   --native-ssh                                          Use the native (Go-based) SSH implementation. [$MACHINE_NATIVE_SSH]
+#   --help, -h                                            show help
+#   --version, -v                                         print the version
+#
+# Commands:
+#   active                Print which machine is active
+#   config                Print the connection config for machine
+#   create                Create a machine.
+#   env                   Display the commands to set up the environment for the Docker client
+#   inspect               Inspect information about a machine
+#   ip                    Get the IP address of a machine
+#   kill                  Kill a machine
+#   ls                    List machines
+#   regenerate-certs      Regenerate TLS Certificates for a machine
+#   restart               Restart a machine
+#   rm                    Remove a machine
+#   ssh                   Log into or run a command on a machine with SSH.
+#   scp                   Copy files between machines
+#   start                 Start a machine
+#   status                Get the status of a machine
+#   stop                  Stop a machine
+#   upgrade               Upgrade a machine to the latest version of Docker
+#   url                   Get the URL of a machine
+#   help                  Shows a list of commands or help for one command
+
